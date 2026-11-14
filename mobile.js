@@ -21,3 +21,7 @@ $('#touch-pause').onclick=pause;$('#touch-reset').onclick=resetTraining;mobileQu
 function updateOrientation(){releaseTouchControls();if(rotationPaused&&!portraitQuery.matches&&state==='paused'){rotationPaused=false;pause()}syncMobileScreen()}portraitQuery.addEventListener('change',updateOrientation);$('#rotate-back').onclick=()=>{rotationPaused=false;quitMatch()};$('#touch-sound').onclick=()=>{$('#sound').onclick();$('#touch-sound').textContent=sound?'SOUND ON':'SOUND OFF'};
 
 
+const iphoneDevice=/iPhone|iPod/.test(navigator.userAgent||'');
+const homeScreenMode=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches;
+$('#iphone-install-tip').hidden=!iphoneDevice||homeScreenMode;
+
