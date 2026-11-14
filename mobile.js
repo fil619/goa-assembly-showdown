@@ -1,4 +1,15 @@
 let rotationPaused=false;const portraitQuery=matchMedia('(orientation: portrait)');
+let mobileBattleFullscreen=false;
+function isMobileBattleDevice(){return mobileQuery.matches&&(navigator.maxTouchPoints>0||matchMedia('(pointer: coarse)').matches)}
+async function enterMobileBattleFullscreen(){
+ if(!isMobileBattleDevice())return;
+ const target=$('.game-layout');
+ try{if(!document.fullscreenElement&&!document.webkitFullscreenElement){if(target.requestFullscreen)await target.requestFullscreen({navigationUI:'hide'});else if(target.webkitRequestFullscreen)await target.webkitRequestFullscreen();else return}mobileBattleFullscreen=true;if(state==='menu'){await exitMobileBattleFullscreen();return}}catch{mobileBattleFullscreen=false}
+}
+async function exitMobileBattleFullscreen(){
+ if(!mobileBattleFullscreen)return;mobileBattleFullscreen=false;
+ try{if(document.fullscreenElement&&document.exitFullscreen)await document.exitFullscreen();else if(document.webkitFullscreenElement&&document.webkitExitFullscreen)await document.webkitExitFullscreen()}catch{/* Keep game navigation usable if the browser already exited. */}
+}
 const mobileQuery=matchMedia('(max-width: 900px), (pointer: coarse) and (max-width: 1100px)'),touchPointers=new Map();
 function releaseTouchControls(){touchPointers.clear();for(const code of ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','KeyD'])keys[code]=false;document.querySelectorAll('.touch-button').forEach(b=>b.classList.remove('pressed'))}
 function syncMobileScreen(){const selection=state==='menu';if(selection)rotationPaused=false;document.body.dataset.mobileScreen=selection?'selection':'game';document.body.classList.toggle('mobile-layout',mobileQuery.matches);$('#touch-controls').setAttribute('aria-hidden',String(!mobileQuery.matches));document.querySelectorAll('.touch-button').forEach(b=>b.disabled=state!=='playing');$('#touch-reset').hidden=matchMode!=='training';if(state!=='playing')releaseTouchControls();if(mobileQuery.matches&&portraitQuery.matches&&!selection&&(state==='playing'||state==='intro')){rotationPaused=true;pause()}}
@@ -8,4 +19,5 @@ for(const button of document.querySelectorAll('.touch-button')){button.addEventL
 $('#touch-pause').onclick=pause;$('#touch-reset').onclick=resetTraining;mobileQuery.addEventListener('change',syncMobileScreen);addEventListener('blur',releaseTouchControls);document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseTouchControls()});syncMobileScreen();
 
 function updateOrientation(){releaseTouchControls();if(rotationPaused&&!portraitQuery.matches&&state==='paused'){rotationPaused=false;pause()}syncMobileScreen()}portraitQuery.addEventListener('change',updateOrientation);$('#rotate-back').onclick=()=>{rotationPaused=false;quitMatch()};$('#touch-sound').onclick=()=>{$('#sound').onclick();$('#touch-sound').textContent=sound?'SOUND ON':'SOUND OFF'};
+
 
