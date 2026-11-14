@@ -76,3 +76,5 @@
 
 @media(max-width:900px),(pointer:coarse) and (max-width:1100px){body[data-mobile-screen=game] .game-layout:fullscreen{padding:0;width:100vw;height:100dvh}body[data-mobile-screen=game] .game-layout:-webkit-full-screen{padding:0;width:100vw;height:100vh}}
 
+#iphone-install-tip{font-size:11px;line-height:1.5;color:#c4d4b1;margin:10px 0 0}#iphone-install-tip[hidden]{display:none}
+
